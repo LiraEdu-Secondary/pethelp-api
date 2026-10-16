@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Specie {
+  dog
+  cat
+  other
+}
+
+enum Status {
+  lost
+  found
+}
+
+model Pet {
+  id                Int      @id @default(autoincrement())
+  name              String
+  specie            Specie
+  descricao         String
+  city              String
+  status            Status
+  dateDisappearance DateTime
+  contact           String
+}
