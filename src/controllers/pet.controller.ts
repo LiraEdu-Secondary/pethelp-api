@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import {
   createPet,
+  deletePet,
   getAllPets,
   getPetById,
   updatePet,
@@ -68,7 +69,11 @@ export async function createdPetController(
   }
 }
 
-export async function updatedPet(req: Request, res: Response): Promise<void> {
+// Atualiza campos do pet
+export async function updatedPetController(
+  req: Request,
+  res: Response,
+): Promise<void> {
   // Converte id para number e valida.
   const id = Number(req.params.id);
 
@@ -94,6 +99,38 @@ export async function updatedPet(req: Request, res: Response): Promise<void> {
     console.error("Não foi possivel atualizar os dados do seu pet.");
     res.status(500).json({
       error: "Não foi possivel atualizar os dados do seu pet.",
+    });
+  }
+}
+
+export async function deletePetController(
+  req: Request,
+  res: Response,
+): Promise<void> {
+  try {
+    const id = Number(req.params.id);
+
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      res.status(400).json({
+        error: "ID Inválido",
+      });
+      return;
+    }
+
+    const pet = deletePet(id);
+
+    if (pet === null) {
+      res.status(400).json({
+        error: "Pet não encontrado.",
+      });
+      return;
+    }
+
+    res.status(204).json(pet);
+  } catch (error) {
+    console.error("Não foi possivel deletar seu pet.");
+    res.status(500).json({
+      error: "Não foi possivel deletar seu pet.",
     });
   }
 }

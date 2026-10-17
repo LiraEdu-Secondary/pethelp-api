@@ -27,3 +27,9 @@ export async function updatePet(id: number, data: CreatePetData) {
     data,
   });
 }
+
+export async function deletePet(id: number) {
+  return prisma.pet.delete({
+    where: { id },
+  });
+}

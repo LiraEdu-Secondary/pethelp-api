@@ -1,9 +1,10 @@
 import { Router } from "express";
 import {
   createdPetController,
+  deletePetController,
   getPetByIdController,
   listPets,
-  updatedPet,
+  updatedPetController,
 } from "../controllers/pet.controller";
 
 const petsRouter = Router();
@@ -14,6 +15,8 @@ petsRouter.get("/:id", getPetByIdController);
 
 petsRouter.post("/", createdPetController);
 
-petsRouter.put("/:id", updatedPet);
+petsRouter.put("/:id", updatedPetController);
+
+petsRouter.delete("/:id", deletePetController);
 
 export { petsRouter };
