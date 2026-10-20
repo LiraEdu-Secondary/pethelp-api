@@ -27,7 +27,7 @@ export async function getPetByIdController(
   try {
     const id = Number(req.params.id);
 
-    if (!Number.isSafeInteger(id) || id <= 1) {
+    if (!Number.isSafeInteger(id) || id <= 0) {
       res.status(400).json({ error: "ID inválido." });
       return;
     }
@@ -62,7 +62,9 @@ export async function createdPetController(
       return;
     }
     const pet = await createPet(parsedBody.data);
-    res.status(201).json(pet);
+    res.status(201).json({
+      message: "Pet cadastrado com sucesso!"
+    });
   } catch (error) {
     console.error("Não foi possivel cadastrar o seu pet", error);
     res.status(500).json({ error: "Não foi possivel cadastrar o seu pet." });
@@ -117,7 +119,7 @@ export async function deletePetController(
       return;
     }
 
-    const pet = deletePet(id);
+    const pet = await deletePet(id);
 
     if (pet === null) {
       res.status(400).json({
@@ -126,7 +128,9 @@ export async function deletePetController(
       return;
     }
 
-    res.status(204).json(pet);
+    res.status(204).json({
+      message: "Pet deletado com sucesso.",
+    });
   } catch (error) {
     console.error("Não foi possivel deletar seu pet.");
     res.status(500).json({
