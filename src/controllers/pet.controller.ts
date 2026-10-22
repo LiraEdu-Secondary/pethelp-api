@@ -6,12 +6,25 @@ import {
   getPetById,
   updatePet,
 } from "../services/pet.service";
-import { createPetSchema } from "../schemas/pet-schemas";
+import { createPetSchema, listPetsQuerySchema, updatePetSchema } from "../schemas/pet-schemas";
 
 // Lista todos os pets
-export async function listPets(_req: Request, res: Response): Promise<void> {
+export async function listPets(req: Request, res: Response): Promise<void> {
+  const parsedQuery = listPetsQuerySchema.safeParse(req.query);
+
+  if (!parsedQuery.success) {
+    res.status(400).json({
+      error: "Parâmetros de consulta inválidos.",
+      details: parsedQuery.error.issues,
+    });
+    return;
+  }
+
+  const { limit, page } = parsedQuery.data;
+  const skip = (page - 1) * limit;
+
   try {
-    const pets = await getAllPets();
+    const pets = await getAllPets(skip, limit);
     res.status(200).json(pets);
   } catch (error) {
     console.error("Erro ao buscar pets. ", error);
@@ -63,7 +76,7 @@ export async function createdPetController(
     }
     const pet = await createPet(parsedBody.data);
     res.status(201).json({
-      message: "Pet cadastrado com sucesso!"
+      message: "Pet cadastrado com sucesso!",
     });
   } catch (error) {
     console.error("Não foi possivel cadastrar o seu pet", error);
@@ -85,7 +98,7 @@ export async function updatedPetController(
   }
 
   try {
-    const parsedBody = createPetSchema.safeParse(req.body);
+    const parsedBody = updatePetSchema.safeParse(req.body);
 
     if (!parsedBody.success) {
       res.status(400).json({

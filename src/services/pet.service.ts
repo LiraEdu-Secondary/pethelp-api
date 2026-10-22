@@ -1,9 +1,11 @@
 import { prisma } from "../lib/prisma";
-import type { CreatePetData } from "../schemas/pet-schemas";
+import type { CreatePetData, UpdatePetData } from "../schemas/pet-schemas";
 
 // Retorna todos os pets cadastrados no banco de dados
-export async function getAllPets() {
+export async function getAllPets(skip: number, limit: number) {
   return prisma.pet.findMany({
+    skip,
+    take: limit,
     orderBy: { id: "asc" },
   });
 }
@@ -17,11 +19,16 @@ export async function getPetById(id: number) {
 
 // Cria pet no banco de dados
 export async function createPet(data: CreatePetData) {
-  return prisma.pet.create({ data });
+  return prisma.pet.create({
+    data: {
+      ...data,
+      status: "lost"
+    }
+  });
 }
 
 // Atualiza campos do pet
-export async function updatePet(id: number, data: CreatePetData) {
+export async function updatePet(id: number, data: UpdatePetData) {
   return prisma.pet.update({
     where: { id },
     data,
